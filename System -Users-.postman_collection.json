@@ -1,0 +1,1153 @@
+{
+	"info": {
+		"_postman_id": "0622be08-8600-46be-a58e-75f45ca53970",
+		"name": "System \"Users\"",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20030822"
+	},
+	"item": [
+		{
+			"name": "Entering the system",
+			"item": [
+				{
+					"name": "doRegister happy path",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									" var jsonData = pm.response.json();\r",
+									"var jsonReq = JSON.parse(pm.request.body);\r",
+									"\r",
+									"pm.test(\"The User has been registered\", function () {\r",
+									"\r",
+									"if(pm.expect(pm.response.text()).to.not.include(\"error\")) {\r",
+									"pm.collectionVariables.set(\"doRegister_email\", jsonData.email);\r",
+									"pm.collectionVariables.set(\"doRegister_password\", jsonReq.password);\r",
+									"console.log(\"The user \" + jsonData.email + \" has been registered\");\r",
+									"} });\r",
+									"\r",
+									"pm.test(\"The Email from response is equal to the Email from request\", function() {\r",
+									"    pm.expect(jsonReq.email).to.equal(jsonData.email);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"The Name from response is equal to the Name from request\", function() {\r",
+									"    pm.expect(jsonReq.name).to.equal(jsonData.name);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Avatar is by default\", function() {\r",
+									"    pm.expect(jsonData.avatar).to.equal(\"http://users.bugred.ru//tmp/default_avatar.jpg\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"{{$randomEmail}}\",\r\n    \"name\": \"{{$randomUserName}}\",\r\n    \"password\": \"{{$randomPassword}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/doregister",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"doregister"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "doRegister without required parameter",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									" var jsonData = pm.response.json();\r",
+									"var jsonReq = JSON.parse(pm.request.body);\r",
+									"\r",
+									"pm.test(\"The Type from response is error\", function () {\r",
+									"pm.expect(jsonData.type).to.equal(\"error\");\r",
+									"}\r",
+									");\r",
+									"\r",
+									"pm.test(\"The Message from response is correct\", function () {\r",
+									"pm.expect(jsonData.message).to.equal(\"Параметр email является обязательным!\");\r",
+									"}\r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"{{$randomUserName}}\",\r\n    \"password\": \"{{$randomPassword}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/doregister",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"doregister"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "doLogin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"User can login\", function () {\r",
+									"        var jsonData = pm.response.json();\r",
+									"        var jsonReq = JSON.parse(pm.request.body);\r",
+									"\r",
+									" if(pm.expect(jsonData.result).to.eql(true)) {\r",
+									"     console.log(\"The user \" + jsonReq.email + \" has been successfully logged in\");\r",
+									" }\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"{{doRegister_email}}\",\r\n    \"password\": \"{{doRegister_password}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/dologin",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"dologin"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Company",
+			"item": [
+				{
+					"name": "createcompany ИП",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonReq = JSON.parse(pm.request.body);\r",
+									"\r",
+									"var jsonResp = pm.response.json();\r",
+									"\r",
+									"pm.test(\"The Company has been created\", function () {\r",
+									"if(pm.expect(pm.response.text()).to.not.include(\"error\")){\r",
+									"pm.collectionVariables.set(\"createCompany_id\", jsonResp.id_company);\r",
+									"console.log(\"The company with id: \" + jsonResp.id_company + \" has been created\");\r",
+									"} \r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"The CompanyName from response is equal to the CompanyName from request\", function() {\r",
+									"    pm.expect(jsonReq.company_name).to.equal(jsonResp.company.name);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"The CompanyType from response is equal to the CompanyType from request\", function() {\r",
+									"    pm.expect(jsonReq.company_type).to.equal(jsonResp.company.type);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"The CompanyUsers from response is equal to the CompanyUsers from request\", function() {\r",
+									"    pm.expect(jsonReq.company_users[0]).to.equal(jsonResp.company.users[0]);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"company_name\": \"{{$randomCompanyName}}\",\r\n  \"company_type\": \"ИП\",\r\n  \"company_users\": [\"{{doRegister_email}}\"],\r\n  \"email_owner\": \"{{doRegister_email}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/createcompany",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"createcompany"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getcompany",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonResp = pm.response.json();\r",
+									"\r",
+									"var idCompany = pm.request.url.query.find(a=>a.key===\"id_company\")[\"value\"]\r",
+									"\r",
+									"pm.test(\"Get the company\", function () {\r",
+									"if(pm.expect(pm.response.text()).to.not.include(\"error\")) {\r",
+									"console.log(\" Here is the company with id: \" + idCompany);\r",
+									"}});\r",
+									"\r",
+									"pm.test(\"Id from request is equal to id from response\", function () {\r",
+									"    pm.expect(idCompany).to.include(jsonResp.id_company);\r",
+									"})\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/getcompany?id_company={{createCompany_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"getcompany"
+							],
+							"query": [
+								{
+									"key": "id_company",
+									"value": "{{createCompany_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Task",
+			"item": [
+				{
+					"name": "createtask",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"var jsonResp = pm.response.json();\r",
+									"pm.test(\"Task has been created\", function () {\r",
+									"\r",
+									"if(pm.expect(pm.response.text()).to.not.include(\"error\")) {\r",
+									"\r",
+									"pm.collectionVariables.set(\"createTask_id\", jsonResp.id_task);\r",
+									"console.log(\"The taks with id: \" + jsonResp.id_task + \" has been created\");\r",
+									"\r",
+									"}});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"task_title\": \"{{$randomLoremSentence}}\",\r\n    \"task_description\": \"{{$randomLoremWords}}\",\r\n    \"email_owner\": \"{{doRegister_email}}\",\r\n    \"email_assign\": \"{{doRegister_email}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/createtask",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"createtask"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updatetask",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonResp = pm.response.json();\r",
+									"var jsonReq = JSON.parse(pm.request.body);\r",
+									"\r",
+									"pm.test(\"Task updating\", function () {\r",
+									"\r",
+									"if(pm.expect(pm.response.text()).to.not.include(\"error\")) {\r",
+									"\r",
+									"console.log(\"The taks with id: \" + jsonReq.id_task + \" has been updated\");\r",
+									"\r",
+									"}});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id_task\": \"{{createTask_id}}\",\r\n    \"task_title\": \"{{$randomLoremSentence}}\",\r\n    \"task_description\": \"{{$randomLoremWords}}\",\r\n    \"email_assign\": \"{{doRegister_email}}\",\r\n    \"email_owner\": \"{{doRegister_email}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/updatetask",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"updatetask"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AddTaskInCron",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonResp = pm.response.json();\r",
+									"\r",
+									"var taskId = pm.request.url.query.find(a=>a.key===\"task_id\")[\"value\"]\r",
+									"\r",
+									"pm.test(\"Add task in Cron\", function () {\r",
+									"\r",
+									"if(pm.expect(pm.response.text()).to.not.include(\"error\")) {\r",
+									"\r",
+									"console.log(\"The taks with id: \" + taskId + \" has been added in cron\");\r",
+									"\r",
+									"}});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/AddTaskInCron?task_id={{createTask_id}}&email_owner={{doRegister_email}}&hours=1&minutes=5&month=5&days=1&day_weeks=7",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"AddTaskInCron"
+							],
+							"query": [
+								{
+									"key": "task_id",
+									"value": "{{createTask_id}}"
+								},
+								{
+									"key": "email_owner",
+									"value": "{{doRegister_email}}"
+								},
+								{
+									"key": "hours",
+									"value": "1"
+								},
+								{
+									"key": "minutes",
+									"value": "5"
+								},
+								{
+									"key": "month",
+									"value": "5"
+								},
+								{
+									"key": "days",
+									"value": "1"
+								},
+								{
+									"key": "day_weeks",
+									"value": "7"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deletetask",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonResp = pm.response.json();\r",
+									"\r",
+									"var taskId = pm.request.url.query.find(a=>a.key===\"task_id\")[\"value\"]\r",
+									"\r",
+									"pm.test(\"Add task in Cron\", function () {\r",
+									"\r",
+									"if(pm.expect(pm.response.text()).to.not.include(\"error\")) {\r",
+									"\r",
+									"console.log(\"The taks with id: \" + taskId + \" has been deleted\");\r",
+									"\r",
+									"}});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/deletetask?task_id={{createTask_id}}&email_owner={{doRegister_email}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"deletetask"
+							],
+							"query": [
+								{
+									"key": "task_id",
+									"value": "{{createTask_id}}"
+								},
+								{
+									"key": "email_owner",
+									"value": "{{doRegister_email}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "createuserwithtasks",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonReq = JSON.parse(pm.request.body);\r",
+									"\r",
+									"var jsonData = pm.response.json();\r",
+									"pm.test(\"User with tasks has been created\", function () {\r",
+									"    if (pm.expect(pm.response.text()).to.not.include(\"error\")) {\r",
+									"\r",
+									"        pm.collectionVariables.set(\"createUserWithTasks_email\", jsonData.email);\r",
+									"        pm.collectionVariables.set(\"createUserWithTasks_task1\", jsonData.tasks[0].id);\r",
+									"\r",
+									"        console.log(\"The user \" + jsonData.email + \" with tasks \" + jsonData.tasks[0].id + \" and \" + jsonData.tasks[1].id + \" has been created\");\r",
+									"    }\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n \"email\": \"{{$randomEmail}}\",\r\n \"name\": \"{{$randomFullName}}\",\r\n \"tasks\": [{\r\n   \"title\": \"{{$randomLoremSentence}}\",\r\n   \"description\": \"{{$randomLoremSentences}}\"\r\n  },\r\n  {\r\n   \"title\": \"{{$randomLoremSentence}}\",\r\n   \"description\": \"{{$randomLoremSentences}}\"\r\n  }\r\n ],\r\n \"companies\": [25],\r\n \"hobby\": \"{{$randomJobTitle}}\",\r\n    \"adres\": \"{{$randomStreetAddress}}\",\r\n    \"name1\": \"{{$randomFirstName}}\",\r\n    \"surname1\": \"{{$randomLastName}}\",\r\n    \"fathername1\": \"{{$randomUserName}}\",\r\n    \"cat\": \"{{$randomFirstName}}\",\r\n    \"dog\": \"{{$randomFirstName}}\",\r\n    \"parrot\": \"{{$randomFirstName}}\",\r\n    \"cavy\": \"{{$randomFirstName}}\",\r\n    \"hamster\": \"{{$randomFirstName}}\",\r\n    \"squirrel\": \"{{$randomFirstName}}\",\r\n    \"phone\": \"{{$randomPhoneNumber}}\",\r\n    \"inn\": \"123456789012\",\r\n    \"gender\": \"m\",\r\n    \"birthday\": \"01.04.1999\",\r\n    \"date_start\": \"02.09.2009\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/createuserwithtasks",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"createuserwithtasks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "createuser",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									" var jsonData = pm.response.json();\r",
+									"pm.test(\"User creation\", function () {\r",
+									"if(pm.expect(pm.response.text()).to.not.include(\"error\")) {\r",
+									"pm.collectionVariables.set(\"createUser_email\", jsonData.email);\r",
+									"console.log(\"The user \" + jsonData.email + \" has been created\");\r",
+									"} });\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"{{$randomEmail}}\",\r\n    \"name\": \"{{$randomFullName}}\",\r\n    \"tasks\": [\r\n        {{createUserWithTasks_task1}}\r\n    ],\r\n    \"companies\": [\r\n        25\r\n    ],\r\n    \"hobby\": \"{{$randomJobTitle}}\",\r\n    \"adres\": \"{{$randomStreetAddress}}\",\r\n    \"name1\": \"{{$randomFirstName}}\",\r\n    \"surname1\": \"{{$randomLastName}}\",\r\n    \"fathername1\": \"{{$randomUserName}}\",\r\n    \"cat\": \"{{$randomFirstName}}\",\r\n    \"dog\": \"{{$randomFirstName}}\",\r\n    \"parrot\": \"{{$randomFirstName}}\",\r\n    \"cavy\": \"{{$randomFirstName}}\",\r\n    \"hamster\": \"{{$randomFirstName}}\",\r\n    \"squirrel\": \"{{$randomFirstName}}\",\r\n    \"phone\": \"{{$randomPhoneNumber}}\",\r\n    \"inn\": \"123456789012\",\r\n    \"gender\": \"m\",\r\n    \"birthday\": \"{{$randomDatePast}}\",\r\n    \"date_start\": \"{{$randomDateFuture}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/createuser",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"createuser"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getuser",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonResp = pm.response.json();\r",
+									"\r",
+									"var email = pm.request.url.query.find(a=>a.key===\"email\")[\"value\"]\r",
+									"\r",
+									"pm.test(\"Get the user\", function () {\r",
+									"\r",
+									"if(pm.expect(pm.response.text()).to.not.include(\"error\")) {\r",
+									"\r",
+									"console.log(\"Here is the user with email: \" + email);\r",
+									"\r",
+									"}});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/getuser?email={{createUser_email}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"getuser"
+							],
+							"query": [
+								{
+									"key": "email",
+									"value": "{{createUser_email}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getuserfull",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"var userFullEmail = pm.request.url.query.find(a=>a.key===\"email\")[\"value\"]\r",
+									"\r",
+									"pm.test(\"Get the userFull data\", function () {\r",
+									"\r",
+									"if(pm.expect(pm.response.text()).to.not.include(\"error\")) {\r",
+									"\r",
+									"console.log(\"Here is the userFull with email: \" + userFullEmail);\r",
+									"\r",
+									"}});\r",
+									"\r",
+									"pm.test(\"Schema is valid\", function () {\r",
+									"    const schema = {\r",
+									"        type: \"object\",\r",
+									"        properties: {\r",
+									"            tasks: {\r",
+									"                type: \"array\"\r",
+									"            }\r",
+									"        }\r",
+									"    };\r",
+									"    pm.response.to.have.jsonSchema(schema);\r",
+									"\r",
+									"  \r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/getuserfull?email=manager34@mail.ru",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"getuserfull"
+							],
+							"query": [
+								{
+									"key": "email",
+									"value": "manager34@mail.ru"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "fullupdateuser",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									" var jsonData = pm.response.json();\r",
+									"pm.test(\"FullUser updating\", function () {\r",
+									"if(pm.expect(pm.response.text()).to.not.include(\"error\")) {\r",
+									"console.log(\"The FullUser \" + jsonData.email + \" has been updated\");\r",
+									"} });\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"{{createUserWithTasks_email}}\",\r\n    \"name\": \"{{$randomFullName}}\",\r\n   \r\n   \"hobby\": \"{{$randomJobTitle}}\",\r\n    \"adres\": \"{{$randomStreetAddress}}\",\r\n    \"name1\": \"{{$randomFirstName}}\",\r\n    \"surname1\": \"{{$randomLastName}}\",\r\n    \"fathername1\": \"{{$randomUserName}}\",\r\n    \"cat\": \"{{$randomFirstName}}\",\r\n    \"dog\": \"{{$randomFirstName}}\",\r\n    \"parrot\": \"{{$randomFirstName}}\",\r\n    \"cavy\": \"{{$randomFirstName}}\",\r\n    \"hamster\": \"{{$randomFirstName}}\",\r\n    \"squirrel\": \"{{$randomFirstName}}\",\r\n    \"phone\": \"{{$randomPhoneNumber}}\",\r\n    \"inn\": \"123456789012\",\r\n    \"gender\": \"m\",\r\n    \"birthday\": \"01.04.1999\",\r\n    \"date_start\": \"02.09.2009\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/fullupdateuser",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"fullupdateuser"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "useronefield",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonResp = pm.response.json();\r",
+									"\r",
+									"var useroneFieldEmail = pm.request.url.query.find(a=>a.key===\"email\")[\"value\"]\r",
+									"var field = pm.request.url.query.find(a=>a.key===\"field\")[\"value\"]\r",
+									"\r",
+									"\r",
+									"pm.test(\"Update the user one field\", function () {\r",
+									"\r",
+									"if(pm.expect(pm.response.text()).to.not.include(\"error\")) {\r",
+									"\r",
+									"console.log(\"The field \" + field + \" of the user \" + useroneFieldEmail + \" has been updated\");\r",
+									"\r",
+									"}});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/useronefield?email={{createUser_email}}&field=cat&value=Yosya",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"useronefield"
+							],
+							"query": [
+								{
+									"key": "email",
+									"value": "{{createUser_email}}"
+								},
+								{
+									"key": "field",
+									"value": "cat"
+								},
+								{
+									"key": "value",
+									"value": "Yosya"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "addavatar",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonResp = pm.response.json();\r",
+									"\r",
+									"var userEmail = pm.request.url.query.find(a=>a.key===\"email\")[\"value\"]\r",
+									"\r",
+									"\r",
+									"pm.test(\"Add avatar\", function () {\r",
+									"\r",
+									"if(pm.expect(pm.response.text()).to.not.include(\"error\")) {\r",
+									"\r",
+									"console.log(\"The avatar for the user \" + userEmail + \" has been added\");\r",
+									"\r",
+									"}});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "avatar",
+									"type": "file",
+									"src": "/C:/Users/moskv/OneDrive/Pictures/Saved Pictures/f52741fb62bf1d821948a49204406bdc.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/addavatar?email={{createUser_email}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"addavatar"
+							],
+							"query": [
+								{
+									"key": "email",
+									"value": "{{createUser_email}}"
+								},
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteavatar",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonResp = pm.response.json();\r",
+									"\r",
+									"var userEmail = pm.request.url.query.find(a=>a.key===\"email\")[\"value\"]\r",
+									"\r",
+									"pm.test(\"Delete avatar\", function () {\r",
+									"\r",
+									"if(pm.expect(pm.response.text()).to.not.include(\"error\")) {\r",
+									"\r",
+									"console.log(\"The \" + userEmail + \"'s avatar has been deleted\");\r",
+									"\r",
+									"}});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/deleteavatar?email={{createUser_email}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"deleteavatar"
+							],
+							"query": [
+								{
+									"key": "email",
+									"value": "{{createUser_email}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteUser",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonResp = pm.response.json();\r",
+									"\r",
+									"var userEmail = pm.request.url.query.find(a=>a.key===\"email\")[\"value\"]\r",
+									"\r",
+									"pm.test(\"Delete user\", function () {\r",
+									"\r",
+									"if(pm.expect(pm.response.text()).to.not.include(\"error\")) {\r",
+									"\r",
+									"console.log(\"The user \" + userEmail + \" has been deleted\");\r",
+									"\r",
+									"}});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/deleteuser?email={{createUser_email}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"deleteuser"
+							],
+							"query": [
+								{
+									"key": "email",
+									"value": "{{createUser_email}}"
+								},
+								{
+									"key": "email",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteUserWithTasks",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonResp = pm.response.json();\r",
+									"\r",
+									"var userEmail = pm.request.url.query.find(a=>a.key===\"email\")[\"value\"]\r",
+									"\r",
+									"pm.test(\"Delete user with tasks\", function () {\r",
+									"\r",
+									"if(pm.expect(pm.response.text()).to.not.include(\"error\")) {\r",
+									"\r",
+									"console.log(\"The user \" + userEmail + \" has been deleted\");\r",
+									"\r",
+									"}});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/deleteuser?email={{createUserWithTasks_email}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"deleteuser"
+							],
+							"query": [
+								{
+									"key": "email",
+									"value": "{{createUserWithTasks_email}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteRegisteredUser",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonResp = pm.response.json();\r",
+									"\r",
+									"var userEmail = pm.request.url.query.find(a=>a.key===\"email\")[\"value\"]\r",
+									"\r",
+									"pm.test(\"Delete registered user\", function () {\r",
+									"\r",
+									"if(pm.expect(pm.response.text()).to.not.include(\"error\")) {\r",
+									"\r",
+									"console.log(\"The registered user \" + userEmail + \" has been deleted\");\r",
+									"\r",
+									"}});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/deleteuser?email={{doRegister_email}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"deleteuser"
+							],
+							"query": [
+								{
+									"key": "email",
+									"value": "{{doRegister_email}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Other",
+			"item": [
+				{
+					"name": "list",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/list",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"list"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "magicsearch",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"var jsonResp = pm.response.json();\r",
+									"var jsonReq = JSON.parse(pm.request.body);\r",
+									"\r",
+									"pm.test(\"Magic search result is successful\" , function () {\r",
+									"\r",
+									"if(pm.expect(pm.response.text()).to.not.include(\"error\")) {\r",
+									"\r",
+									"console.log(\"Search result contains \" + jsonReq.query);\r",
+									"\r",
+									"}});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\"query\":\"{{createCompany_id}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/magicsearch",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"magicsearch"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "doRegister_email",
+			"value": ""
+		},
+		{
+			"key": "doRegister_password",
+			"value": ""
+		},
+		{
+			"key": "createCompany_id",
+			"value": ""
+		},
+		{
+			"key": "createTask_id",
+			"value": ""
+		},
+		{
+			"key": "createUser_email",
+			"value": ""
+		},
+		{
+			"key": "createUserWithTasks_email",
+			"value": ""
+		},
+		{
+			"key": "createUserWithTasks_task1",
+			"value": ""
+		}
+	]
+}
